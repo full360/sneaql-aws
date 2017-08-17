@@ -16,7 +16,23 @@ sneaql-aws depends upon sneaql.
 gem install sneaql-aws
 ```
 
-## Command: AWS_S3_OBJECT_LIST
+## AWS Credentials
+
+AWS credentials are handled with the same precedence as the ruby SDK. If an IAM role is applied to your instance or container, you do not need to provide access keys.
+
+Note that you do need to provide the AWS region to most of the sneaql command tags. You can set and use an environment variable `AWS_REGION=us-west-2` then reference this region in your sneaql command tag `:env_AWS_REGION`.
+
+## Enabling SneaQL Extensions
+
+SneaQL extensions are installed on your system as a rubygem, but the sneaql binary disables them by default. In order to enable this (or any) sneaql extension, you need to set the following environment variable as shown:
+
+```
+SNEAQL_EXTENSIONS=sneaql-aws
+```
+
+Note that you can enable multiple extensions by providing a comma delimited list to the `SNEAQL_EXTENSIONS` variable.
+
+## Command: AWS\_S3\_OBJECT_LIST
 
 **description:**
 
@@ -69,4 +85,35 @@ insert into s3_records values
   ':s3records.owner_name',
   ':s3records.owner_id'
 );
+```
+
+## Command: AWS\_RECORDSET\_TO_S3
+
+**description:**
+
+dumps the contents of a sneaql recordset into a file in S3. there are several formatting options available. the `json` and `gzipjson` formats are useful for easy loading into Amazon Redshift via the `copy` command with the `json(auto)` options.
+
+**parameters:**
+
+* required - recordset name to dump
+* required - target bucket name
+* required - AWS region containing the bucket
+* required - S3 object key (path in S3)
+* required - object type.. current available values are `json` and `gzipjson`
+
+**behavior:**
+
+* data is dumped into a local file in the specified format, then pushed to S3
+* **NOTE** this is not intended to be used to dump large amounts of data... as recordsets must fit in memory!
+
+**examples:**
+
+the example below creates a recordset from a sql query, then pushes the recordset to S3 as a gzipped json file:
+
+
+```
+/*-recordset column_definitions -*/
+select * from pg_table_def;
+
+/*-aws_recordset_to_s3 column_definitions 'my-bucket-name' 'us-west-2' 'dbdata/pg_table_def.json' gzipjson-*/
 ```

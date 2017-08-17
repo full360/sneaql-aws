@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name        = 'sneaql-aws'
-  s.version     = '0.0.2'
-  s.date        = '2017-07-28'
+  s.version     = '0.0.3'
+  s.date        = '2017-08-15'
   s.summary     = "sneaql extensions to interact with AWS"
   s.description = "provides extensions to sneaql allowing interaction with AWS"
   s.authors     = ["jeremy winters"]

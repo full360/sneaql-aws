@@ -127,6 +127,7 @@ module SneaqlAWS
           resp = s3.client.list_objects_v2(
             {
               bucket: bucket,
+              prefix: prefix,
               continuation_token: next_token
             }
           )
